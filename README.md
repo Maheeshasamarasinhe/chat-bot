@@ -1,1 +1,1 @@
-![Chatbot Image](img\Screenshot 2025-11-22 175151.png)
+![Chatbot Image](img/Screenshot%202025-11-22%20175151.png)
