@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, make_response
+from flask_cors import CORS
 from src.helper import download_embeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -11,6 +12,19 @@ import os
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+
+@app.after_request
+def set_headers(response):
+    # Allow embedding in iframe from any origin
+    if 'X-Frame-Options' in response.headers:
+        del response.headers['X-Frame-Options']
+    response.headers['Content-Security-Policy'] = "frame-ancestors *"
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    return response
 
 
 load_dotenv()
@@ -77,4 +91,4 @@ def chat():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port= 8080, debug= True)
+    app.run(host="0.0.0.0", port= 8081, debug= True)
